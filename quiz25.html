@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulazione Concorso Operatore Socio Sanitario - Modulo 1</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            margin: 0;
+            padding: 20px;
+            color: #f0f0f0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700; }
+            to { text-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700; }
+        }
+
+        #timer {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5em;
+            color: #00eaff;
+            text-shadow: 0 0 5px #00eaff;
+        }
+
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .question-box {
+            width: 40px;
+            height: 40px;
+            margin: 8px;
+            background: linear-gradient(45deg, #333, #555);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .question-box:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question-box.answered {
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        .question h3 {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 1.6em;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.5);
+            line-height: 1.4;
+        }
+
+        .option {
+            margin: 10px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .option:hover {
+            background: rgba(255, 255, 255, 0.35);
+            transform: translateX(5px);
+        }
+
+        .option.correct {
+            background: linear-gradient(90deg, #00eaff, #00b8d4);
+            color: #fff;
+            box-shadow: 0 0 15px #00eaff;
+        }
+
+        .option.wrong {
+            background: linear-gradient(90deg, #ff5252, #d81b60);
+            color: #fff;
+            box-shadow: 0 0 15px #ff5252;
+        }
+
+        .lamp {
+            display: none;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+            transition: transform 0.3s ease;
+        }
+
+        .lamp:hover {
+            transform: scale(1.2);
+        }
+
+        .explanation {
+            margin-top: 15px;
+            font-style: italic;
+            color: #f0f0f0;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            animation: slideIn 0.5s ease;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2em;
+            box-shadow: 0 0 10px #ffd700;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-button:disabled {
+            background: #666;
+            color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        .nav-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        button#submit {
+            display: block;
+            width: 250px;
+            margin: 20px auto;
+            padding: 15px;
+            background: linear-gradient(45deg, #00eaff, #00b8d4);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.3em;
+            box-shadow: 0 0 15px #00eaff;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        button#submit:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00eaff;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.8em;
+            color: #ffd700;
+            text-shadow: 0 0 10px #ffd700;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulazione Concorso Operatore Socio Sanitario - Modulo 1</h1>
+        <div class="question-nav" id="questionNav"></div>
+        <div id="timer">Tempo rimanente: <span id="time">30:00</span></div>
+        <div id="quiz"></div>
+        <div class="navigation">
+            <button class="nav-button" id="prev" disabled>⬅ Indietro</button>
+            <button class="nav-button" id="next">Avanti ➡</button>
+        </div>
+        <button id="submit">Invia Risposte</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Array di domande con opzioni mescolate casualmente
+        const questions = [
+            {
+                question: "L'organo della fonazione è rappresentato dalla:",
+                options: ["trachea", "laringe", "cavità buccale"],
+                correct: "laringe",
+                explanation: "La laringe è l'organo principale della fonazione, situato nella parte superiore della trachea. Contiene le corde vocali, che vibrano al passaggio dell'aria espirata per produrre suoni. La trachea è un condotto che trasporta l'aria ai polmoni, mentre la cavità buccale contribuisce all'articolazione delle parole ma non alla produzione del suono. La conoscenza di questa struttura è fondamentale per l'OSS, che può assistere pazienti con problemi di fonazione, come quelli tracheostomizzati."
+            },
+            {
+                question: "Un muscolo dell'arto inferiore è:",
+                options: ["il bicipite", "al sartorio", "il trapezio"],
+                correct: "al sartorio",
+                explanation: "Il sartorio è un muscolo lungo e sottile della coscia, appartenente all'arto inferiore, che consente movimenti come la flessione, l'abduzione e la rotazione esterna della gamba. Il bicipite brachiale è un muscolo dell'arto superiore, situato nel braccio, mentre il trapezio si trova nella regione dorsale superiore. Per un OSS, comprendere l'anatomia muscolare è essenziale per supportare la mobilizzazione dei pazienti e prevenire lesioni durante il movimento."
+            },
+            {
+                question: "L'ipofisi è:",
+                options: ["un ormone", "una ghiandola esocrina", "una ghiandola endocrina"],
+                correct: "una ghiandola endocrina",
+                explanation: "L'ipofisi, o ghiandola pituitaria, è una ghiandola endocrina situata alla base del cranio, nella sella turcica dell'osso sfenoide. Secerne ormoni come l'ormone della crescita (GH), l'ACTH e la TSH direttamente nel sangue, regolando numerose funzioni corporee, tra cui metabolismo, crescita e riproduzione. A differenza delle ghiandole esocrine, che rilasciano secrezioni attraverso dotti, l'ipofisi non ha dotti. Non è un ormone, ma produce ormoni. Gli OSS devono conoscere il ruolo delle ghiandole endocrine per comprendere le condizioni dei pazienti, come il diabete insipido."
+            },
+            {
+                question: "L'aorta nasce:",
+                options: ["dall'atrio destro del cuore", "dal ventricolo sinistro del cuore", "dall'atrio sinistro del cuore"],
+                correct: "dal ventricolo sinistro del cuore",
+                explanation: "L'aorta è la principale arteria del corpo umano e origina dal ventricolo sinistro del cuore, che pompa sangue ossigenato nella circolazione sistemica. Il ventricolo sinistro, con la sua parete muscolare spessa, è progettato per generare la pressione necessaria a distribuire il sangue in tutto il corpo. Gli atri (destro e sinistro) ricevono il sangue, ma non danno origine a grandi vasi come l'aorta. Per un OSS, questa conoscenza è rilevante per comprendere la circolazione e assistere pazienti con patologie cardiovascolari."
+            },
+            {
+                question: "Il principale componente delle ossa è:",
+                options: ["carbonato di potassio", "cloruro di calcio", "fosfato di calcio"],
+                correct: "fosfato di calcio",
+                explanation: "Il fosfato di calcio, sotto forma di idrossiapatite, è il principale componente minerale delle ossa, rappresentando circa il 70% della loro composizione. Conferisce durezza e resistenza strutturale, mentre la matrice organica (collagene) fornisce flessibilità. Il cloruro di calcio e il carbonato di potassio non sono componenti significativi delle ossa. Gli OSS devono conoscere la composizione ossea per comprendere le problematiche legate a fratture o osteoporosi, comuni nei pazienti anziani."
+            },
+            {
+                question: "Le cellule del cuore sono alimentate:",
+                options: ["dalla vena porta", "dalla vena giugulare", "dalle coronarie"],
+                correct: "dalle coronarie",
+                explanation: "Le arterie coronarie forniscono sangue ossigenato e nutrienti al miocardio, il tessuto muscolare del cuore, essenziale per la sua contrazione continua. La vena giugulare drena il sangue dalla testa, e la vena porta trasporta sangue dal sistema digerente al fegato, non alimentando il cuore. Gli OSS devono essere consapevoli dell'importanza delle coronarie per riconoscere i segni di ischemia miocardica, come il dolore toracico."
+            },
+            {
+                question: "Il midollo spinale:",
+                options: ["è un aggregato di cellule nervose esterno al sistema nervoso centrale", "permette le reazioni involontarie", "connette l'encefalo con il resto del corpo"],
+                correct: "connette l'encefalo con il resto del corpo",
+                explanation: "Il midollo spinale, parte del sistema nervoso centrale, si estende dalla base del cranio alla regione lombare, connettendo l'encefalo al corpo tramite i nervi spinali. Trasmette segnali motori e sensoriali e media riflessi involontari, ma non è un aggregato di cellule esterne al SNC né si limita ai riflessi. Per gli OSS, questa conoscenza è cruciale per assistere pazienti con lesioni spinali, che possono compromettere la mobilità o la sensibilità."
+            },
+            {
+                question: "I capillari sono:",
+                options: ["l'estremità sottile delle cellule nervose", "la parete assorbente dell'intestino", "sottili vasi sanguigni tra le arterie e le vene"],
+                correct: "sottili vasi sanguigni tra le arterie e le vene",
+                explanation: "I capillari sono vasi sanguigni microscopici con pareti sottili che collegano arteriole e venule, consentendo lo scambio di ossigeno, nutrienti e scorie tra il sangue e i tessuti. Non sono parte dell'intestino (che ha villi per l'assorbimento) né delle cellule nervose (che hanno assoni). Gli OSS devono conoscere la funzione dei capillari per comprendere fenomeni come edema o ischemia nei pazienti."
+            },
+            {
+                question: "Il sangue venoso arriva al cuore per mezzo della:",
+                options: ["vena femorale", "vena cava", "vena porta"],
+                correct: "vena cava",
+                explanation: "La vena cava (superiore e inferiore) è il principale vaso che trasporta il sangue venoso deossigenato dall'intero corpo all'atrio destro del cuore. La vena porta drena il sangue dall'apparato digerente al fegato, e la vena femorale è un vaso periferico. Gli OSS devono conoscere la circolazione venosa per monitorare segni di stasi o trombosi nei pazienti."
+            },
+            {
+                question: "Gli scambi respiratori avvengono:",
+                options: ["nella laringe", "nei bronchi", "negli alveoli"],
+                correct: "negli alveoli",
+                explanation: "Gli alveoli polmonari sono piccole sacche d'aria nei polmoni dove avviene lo scambio gassoso: l'ossigeno passa dal sangue ai tessuti, e l'anidride carbonica viene espulsa. I bronchi trasportano l'aria, e la laringe è coinvolta nella fonazione. Per gli OSS, comprendere questo processo è essenziale per assistere pazienti con patologie respiratorie, come la BPCO."
+            },
+            {
+                question: "Le vene sono i vasi che:",
+                options: ["effettuano la filtrazione della linfa", "trasportano ossigeno", "portano il sangue verso il cuore"],
+                correct: "portano il sangue verso il cuore",
+                explanation: "Le vene trasportano il sangue verso il cuore, principalmente deossigenato, eccetto le vene polmonari che portano sangue ossigenato dai polmoni. Non filtrano la linfa (compito dei vasi linfatici) né trasportano ossigeno come funzione primaria. Gli OSS devono conoscere la funzione venosa per prevenire complicanze come le vene varicose."
+            },
+            {
+                question: "Di quale organo fa parte la chiocciola?",
+                options: ["occhio", "intestino", "orecchio"],
+                correct: "orecchio",
+                explanation: "La chiocciola, o coclea, è una struttura a spirale dell'orecchio interno che converte le vibrazioni sonore in segnali nervosi trasmessi al cervello tramite il nervo acustico. Non è parte dell'occhio né dell'intestino. Gli OSS devono conoscere questa struttura per assistere pazienti con ipoacusia o problemi di equilibrio."
+            },
+            {
+                question: "Quale delle seguenti ossa fa parte dell'arto superiore?",
+                options: ["tibia", "ulna", "sfenoide"],
+                correct: "ulna",
+                explanation: "L'ulna è una delle due ossa lunghe dell'avambraccio, parte dell'arto superiore, insieme al radio. La tibia si trova nella gamba (arto inferiore), e lo sfenoide è un osso del cranio. Gli OSS devono conoscere l'anatomia scheletrica per supportare la mobilizzazione e prevenire lesioni."
+            },
+            {
+                question: "I gameti femminili vengono prodotti:",
+                options: ["nella vagina", "nelle surrenali", "nell'ovaio"],
+                correct: "nell'ovaio",
+                explanation: "Le ovaie sono gli organi del sistema riproduttivo femminile che producono i gameti femminili (ovociti) e ormoni come estrogeni e progesterone. Le surrenali producono ormoni steroidei, e la vagina è un canale di passaggio. Gli OSS devono comprendere il sistema riproduttivo per assistere pazienti in ambito ginecologico."
+            },
+            {
+                question: "Durante l'esecuzione dello stick glicemico ad un paziente diabetico che ha l'epatite C, l'OSS si punge accidentalmente il dito con ago infetto. Esiste un rischio di contagio considerando che l'ago era stato utilizzato il giorno prima?",
+                options: ["Non vi è pericolo di trasmissione in quanto non si trasmette con il sangue", "La puntura è avvenuta circa 24 ore dopo e quindi non vi è rischio di trasmissione", "La puntura è avvenuta circa 24 ore dopo e quindi una bassa carica virale ma vi è possibilità"],
+                correct: "La puntura è avvenuta circa 24 ore dopo e quindi una bassa carica virale ma vi è possibilità",
+                explanation: "Il virus dell'epatite C (HCV) è trasmissibile attraverso il contatto con sangue infetto e può sopravvivere su superfici come aghi per diverse ore o giorni, sebbene la carica virale diminuisca nel tempo. Una puntura accidentale con un ago usato 24 ore prima comporta un rischio di trasmissione, anche se ridotto, che richiede immediate misure di profilassi post-esposizione, come il lavaggio della ferita e la segnalazione all'infermiere o al medico. Gli OSS devono seguire rigorosamente le precauzioni standard per prevenire tali incidenti."
+            },
+            {
+                question: "Che cosa è il test di Bowie e Dick?",
+                options: ["E' un test di gravidanza", "E' un test che serve a controllare il colesterolo", "E' un test che serve a verificare l'affidabilità delle autoclavi con il controllo giornaliero"],
+                correct: "E' un test che serve a verificare l'affidabilità delle autoclavi con il controllo giornaliero",
+                explanation: "Il test di Bowie e Dick è un controllo giornaliero utilizzato per verificare l'efficacia della sterilizzazione a vapore in autoclave, accertando che l'aria sia completamente rimossa e che il vapore penetri correttamente. È essenziale per garantire la sterilità degli strumenti medici. Non ha nulla a che fare con colesterolo o gravidanza. Gli OSS devono conoscere questo test per collaborare nella gestione della sterilizzazione."
+            },
+            {
+                question: "Secondo le più recenti raccomandazioni nelle linee guida per la cura della cute, quale di queste manovre un tempo considerata utile per la guarigione delle piaghe non è più permessa?",
+                options: ["Idratare la pelle con prodotti idratanti", "Massaggiare e frizionare in corrispondenza di prominenze ossee", "Lavare la cute lesa con soluzione fisiologica"],
+                correct: "Massaggiare e frizionare in corrispondenza di prominenze ossee",
+                explanation: "Le linee guida moderne per la prevenzione e il trattamento delle lesioni da pressione (es. EPUAP/NPIAP) sconsigliano il massaggio o la frizione sulle prominenze ossee, poiché possono danneggiare i tessuti già vulnerabili, aumentando il rischio di ulcerazioni. Lavare la cute con soluzione fisiologica e idratarla con prodotti appropriati sono pratiche raccomandate. Gli OSS devono seguire queste linee guida per prevenire lesioni da decubito."
+            },
+            {
+                question: "Cosa si intende per iperpiressia?",
+                options: ["Aumento della temperatura del corpo durante il riposo da 36,1 a 37 C°", "Aumento della temperatura del corpo durante il riposo da 38,2 a 39,9 C°", "Aumento della temperatura del corpo durante il riposo da 37,1 a 38,2 C°"],
+                correct: "Aumento della temperatura del corpo durante il riposo da 38,2 a 39,9 C°",
+                explanation: "L'iperpiressia è definita come un aumento della temperatura corporea tra 38,2°C e 39,9°C, misurata in condizioni di riposo, spesso associata a infezioni, infiammazioni o altre condizioni patologiche. Si distingue dalla febbre lieve (37,1-38,2°C) e dalla febbre alta (>40°C). Gli OSS devono monitorare la temperatura corporea e segnalare casi di iperpiressia all'infermiere per interventi appropriati."
+            },
+            {
+                question: "La malattia diabetica è considerata una patologia cronica e pertanto causa di complicanze. Quale di queste non è dovuta al diabete?",
+                options: ["Retinopatie", "Morbo di Parkinson", "Microangiopatie"],
+                correct: "Morbo di Parkinson",
+                explanation: "Il diabete mellito è una malattia cronica che può causare complicanze vascolari come microangiopatie (danno ai piccoli vasi, es. nei reni o nei nervi) e retinopatie (danno alla retina). Il Morbo di Parkinson, una malattia neurodegenerativa caratterizzata da tremori e rigidità, non è una complicanza del diabete, sebbene i diabetici possano avere un rischio leggermente aumentato di sviluppare condizioni neurologiche. Gli OSS devono conoscere queste complicanze per monitorare i pazienti diabetici."
+            },
+            {
+                question: "Per quanto concerne la 626/94 quali sono i limiti di carico movimentabile per gli OSS maschi e femmine?",
+                options: ["Femmine 15 Kg maschi 20 Kg", "Femmine 30 Kg maschi 40 Kg", "Femmine 20 Kg maschi 30 Kg"],
+                correct: "Femmine 20 Kg maschi 30 Kg",
+                explanation: "Il D.Lgs. 626/94 (ora integrato nel D.Lgs. 81/2008) stabilisce limiti per la movimentazione manuale dei carichi per prevenire infortuni muscolo-scheletrici: 30 kg per gli uomini e 20 kg per le donne, in condizioni ergonomiche ottimali. Gli OSS devono rispettare questi limiti durante attività come il sollevamento di pazienti o attrezzature per evitare lesioni."
+            },
+            {
+                question: "Quali di queste azioni l'OSS non deve compiere nell'assistere un paziente disfagico?",
+                options: ["nessuna delle altre risposte è corretta", "Evitare di somministrare alimenti e bevande di consistenza e temperatura non adeguata a quanto prescritto", "Evitare, se il paziente necessita di essere imboccato di continuare nella manovra, se si verificano problemi o difficoltà, come tosse, cianosi, o altri segni di soffocamento"],
+                correct: "nessuna delle altre risposte è corretta",
+                explanation: "Le opzioni elencate (evitare alimenti di consistenza/temperatura inadeguata e interrompere l'alimentazione in caso di segni di soffocamento) sono entrambe azioni corrette che l'OSS deve compiere per garantire la sicurezza di un paziente disfagico. La disfagia richiede un'attenzione particolare alla consistenza degli alimenti e al monitoraggio di segni di distress respiratorio. Pertanto, 'nessuna delle altre risposte è corretta' è la risposta giusta, poiché non ci sono azioni elencate che l'OSS non dovrebbe compiere."
+            },
+            {
+                question: "In una organizzazione sanitaria, cosa si intende con il termine 'appropriatezza':",
+                options: ["Garantire l'effettuazione di una procedura diagnostica in meno di 25 giorni dalla sua prenotazione", "Possibilità di erogare un'assistenza a basso costo e priva di rischi", "Capacità di assicurare, utilizzando le risorse disponibili in modo efficiente, servizi e prestazioni efficaci"],
+                correct: "Capacità di assicurare, utilizzando le risorse disponibili in modo efficiente, servizi e prestazioni efficaci",
+                explanation: "L'appropriatezza in ambito sanitario si riferisce alla capacità di fornire interventi diagnostici e terapeutici basati su evidenze scientifiche, che rispondano ai bisogni reali del paziente e utilizzino le risorse in modo efficiente. Non si limita a ridurre i costi o rispettare tempistiche arbitrarie, ma mira a garantire la qualità e l'efficacia dell'assistenza. Gli OSS contribuiscono all'appropriatezza eseguendo compiti conformi al loro profilo professionale."
+            },
+            {
+                question: "In base a quali criteri, si 'attribuisce' un compito assistenziale ad un OSS:",
+                options: ["Opportunismo operativo", "Consuetudine organizzativa", "Capacità e competenza del singolo OSS"],
+                correct: "Capacità e competenza del singolo OSS",
+                explanation: "I compiti assistenziali devono essere assegnati all'OSS in base alle sue capacità e competenze, come definite dall'Accordo Stato-Regioni del 22 febbraio 2001, che stabilisce il profilo professionale dell'OSS. L'assegnazione basata su consuetudini o opportunità operative non garantisce la sicurezza del paziente né rispetta le normative. Gli OSS devono operare entro i limiti delle loro competenze per evitare responsabilità legali."
+            },
+            {
+                question: "La tripartizione 'opera, coopera, collabora' serve a:",
+                options: ["nessuna delle altre risposte è corretta", "Togliere tempo prezioso all'assistenza", "Tutelare il paziente"],
+                correct: "Tutelare il paziente",
+                explanation: "La tripartizione 'opera, coopera, collabora' definisce i livelli di responsabilità dell'OSS: 'opera' in autonomia per compiti di base (es. igiene), 'coopera' con l'infermiere per attività complesse (es. mobilizzazione), e 'collabora' con l'équipe multidisciplinare. Questa struttura tutela il paziente, garantendo che ogni intervento sia eseguito da personale qualificato e secondo protocolli, riducendo il rischio di errori."
+            },
+            {
+                question: "Il cieco è un tratto:",
+                options: ["nessuna delle altre risposte è corretta", "dell'intestino crasso", "dell'apparato genitale"],
+                correct: "dell'intestino crasso",
+                explanation: "Il cieco è la prima porzione dell'intestino crasso, situata dopo la valvola ileocecale, dove inizia il processo di assorbimento dell'acqua e compattazione delle feci. Non è parte dell'apparato genitale. Gli OSS devono conoscere l'anatomia digestiva per assistere pazienti con stomie o problemi intestinali."
+            },
+            {
+                question: "In caso di emorragia come bisogna intervenire?",
+                options: ["Pulire la ferita e lavare in acqua calda", "Comprimere la ferita con un panno pulito, tenendo premuto con il palmo della mano", "Pulire la ferita con un disinfettante"],
+                correct: "Comprimere la ferita con un panno pulito, tenendo premuto con il palmo della mano",
+                explanation: "In caso di emorragia esterna, il primo intervento è comprimere la ferita con un panno pulito per fermare il sanguinamento, applicando pressione diretta con il palmo della mano. Pulire la ferita o usare disinfettanti è secondario e può essere controindicato in presenza di sanguinamento attivo. Gli OSS devono conoscere le procedure di primo soccorso per agire rapidamente in emergenza."
+            },
+            {
+                question: "In cosa consiste lo stiramento?",
+                options: ["Nella lesione totale delle fibre muscolari", "Nella lesione parziale di tutte le fibre muscolari", "Nella lesione parziale di poche fibre muscolari"],
+                correct: "Nella lesione parziale di poche fibre muscolari",
+                explanation: "Lo stiramento muscolare è una lesione lieve che comporta l'allungamento o la rottura parziale di poche fibre muscolari, spesso dovuta a un movimento improvviso o sovraccarico. Si distingue dallo strappo (lesione totale o estesa) e dalla contrattura (accorciamento muscolare). Gli OSS devono riconoscere i sintomi dello stiramento per segnalarli e supportare il paziente nella gestione del dolore e della mobilità."
+            },
+            {
+                question: "Cos'è il miocardio?",
+                options: ["Una ghiandola", "Un'arteria", "Un tessuto muscolare"],
+                correct: "Un tessuto muscolare",
+                explanation: "Il miocardio è il tessuto muscolare striato involontario del cuore, responsabile della sua capacità di contrarsi e pompare sangue. È distinto dalle arterie (vasi sanguigni) e dalle ghiandole (organi secretori). Gli OSS devono conoscere la struttura del cuore per comprendere le patologie cardiache e assistere pazienti con problemi cardiovascolari."
+            },
+            {
+                question: "In quale caso è consigliabile sollevare verso l'alto l'arto colpito?",
+                options: ["Il crampo", "La distorsione", "Lo strappo"],
+                correct: "La distorsione",
+                explanation: "Sollevare l'arto colpito è consigliato in caso di distorsione per ridurre l'edema, favorendo il drenaggio linfatico e venoso, secondo il protocollo RICE (Rest, Ice, Compression, Elevation). Nei crampi, è preferibile lo stretching, mentre negli strappi si applica riposo e ghiaccio senza sollevamento immediato. Gli OSS devono applicare queste tecniche per prevenire complicanze."
+            },
+            {
+                question: "Ai fini del ricovero ordinario e programmato in ambiente ospedaliero per un assistito anziano cosa è necessario?",
+                options: ["La richiesta del medico di base e il pagamento di un ticket", "Il pagamento di una somma all'amministrazione ospedaliera", "La richiesta motivata del medico di base o del pediatra di libera scelta, accompagnata dalla presentazione del libretto sanitario"],
+                correct: "La richiesta motivata del medico di base o del pediatra di libera scelta, accompagnata dalla presentazione del libretto sanitario",
+                explanation: "Per un ricovero ordinario programmato, il Servizio Sanitario Nazionale richiede una richiesta motivata del medico di base, che specifichi la diagnosi e la necessità clinica, accompagnata dal libretto sanitario per identificare il paziente. Il pagamento di un ticket può essere richiesto per alcune prestazioni, ma non è obbligatorio per il ricovero, e non è necessaria una somma diretta all'ospedale. Gli OSS devono conoscere queste procedure per supportare i pazienti durante l'accesso ospedaliero."
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        // Carica i quadratini di navigazione
+        function loadQuestionNav() {
+            const navDiv = document.getElementById("questionNav");
+            questions.forEach((_, index) => {
+                const box = document.createElement("div");
+                box.classList.add("question-box");
+                box.textContent = index + 1;
+                box.addEventListener("click", () => {
+                    showQuestion(index);
+                });
+                navDiv.appendChild(box);
+            });
+        }
+
+        // Carica il quiz
+        function loadQuiz() {
+            const quizDiv = document.getElementById("quiz");
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement("div");
+                questionDiv.classList.add("question");
+                questionDiv.id = `question-${index}`;
+                questionDiv.innerHTML = `
+                    <h3>${index + 1}. ${q.question}</h3>
+                    ${q.options.map((opt, i) => `
+                        <div class="option" data-value="${opt}">
+                            <input type="radio" name="q${index}" value="${opt}" id="q${index}_${i}">
+                            <label for="q${index}_${i}">${opt}</label>
+                            <span class="lamp" id="lamp-${index}-${i}">💡</span>
+                        </div>
+                    `).join("")}
+                    <div class="explanation" id="exp-${index}">${q.explanation}</div>
+                `;
+                quizDiv.appendChild(questionDiv);
+
+                // Aggiungi evento per accendere il quadratino
+                const radios = questionDiv.querySelectorAll(`input[name="q${index}"]`);
+                radios.forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        document.querySelectorAll(".question-box")[index].classList.add("answered");
+                    });
+                });
+            });
+            showQuestion(0); // Mostra la prima domanda
+        }
+
+        // Mostra la domanda corrente
+        function showQuestion(index) {
+            document.querySelectorAll(".question").forEach(q => q.classList.remove("active"));
+            document.getElementById(`question-${index}`).classList.add("active");
+            currentQuestion = index;
+
+            // Gestione stato pulsanti
+            document.getElementById("prev").disabled = currentQuestion === 0;
+            document.getElementById("next").disabled = currentQuestion === questions.length - 1;
+        }
+
+        // Timer (30 minuti)
+        let timeLeft = 30 * 60;
+        function startTimer() {
+            const timer = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("time").textContent = 
+                    `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    checkAnswers();
+                }
+            }, 1000);
+        }
+
+        // Controllo risposte e feedback visivo
+        function checkAnswers() {
+            let score = 0;
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const options = document.querySelectorAll(`#question-${index} .option`);
+
+                options.forEach(option => {
+                    const value = option.getAttribute("data-value");
+                    if (value === q.correct) {
+                        option.classList.add("correct");
+                        const lamp = option.querySelector(".lamp");
+                        lamp.style.display = "inline";
+                        lamp.addEventListener("click", () => {
+                            const explanation = document.getElementById(`exp-${index}`);
+                            explanation.style.display = "block";
+                        });
+                    }
+                });
+
+                if (selected) {
+                    if (selected.value === q.correct) {
+                        score++;
+                    } else {
+                        selected.parentElement.classList.add("wrong");
+                    }
+                }
+            });
+
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = `Punteggio: ${score} / ${questions.length}`;
+            document.getElementById("submit").disabled = true;
+            document.getElementById("prev").disabled = true;
+            document.getElementById("next").disabled = true;
+
+            // Disabilita i radio button dopo l'invio
+            document.querySelectorAll("input[type=radio]").forEach(radio => {
+                radio.disabled = true;
+            });
+        }
+
+        // Inizializzazione
+        window.onload = () => {
+            loadQuestionNav();
+            loadQuiz();
+            startTimer();
+
+            document.getElementById("prev").addEventListener("click", () => {
+                if (currentQuestion > 0) showQuestion(currentQuestion - 1);
+            });
+
+            document.getElementById("next").addEventListener("click", () => {
+                if (currentQuestion < questions.length - 1) showQuestion(currentQuestion + 1);
+            });
+
+            document.getElementById("submit").addEventListener("click", checkAnswers);
+        };
+    </script>
+</body>
+</html>
